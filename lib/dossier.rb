@@ -3,12 +3,22 @@
 #:: Name    :  Dossier
 #:: Author  :  Mike Zazaian
 #:: Updated :  2010-01-16
-#:: Detail  :  A resume-building application
+#:: Detail  :  A Resume Builder for Rubyists
+
+# Load all sub-directories recursively as load paths
+Dir.glob("**/").each {|d| $LOAD_PATH << d}
+
+# Create a logger to use application-wide 
+require 'logger'
+$logger = Logger.new STDOUT
 
 module Dossier
+  # Require external libraries
   require 'rubygems'
+  require 'choice'
+  
+  # Require application files
   require 'version'
-  require 'logger'
 
   class Rubyist
     attr_accessor :name, :email, :website, :phone, 
@@ -26,11 +36,11 @@ module Dossier
     end
 
     # Iterate through the initialization options and set instance variables for
-    # all of the ones that exist, print an error for the ones that don't
+    # all of the ones that exist, print a warning for the ones that don't
     def aggregate_options(options)
       options.each do |key, value|
         self.send("#{key.to_s}=", value) and next if self.respond_to?(key)
-        puts ":#{key.to_s} is not a valid option."
+        $logger.warn ":#{key.to_s} is not a valid option."
       end
     end
   end
